@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>View blog posts</h1>
+    <!-- <h1>View blog posts</h1> -->
     <b-table
       show-empty
       stacked="md"
