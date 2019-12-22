@@ -12,8 +12,8 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-link v-bind:to="'/'">Home</b-link>
-            <b-link v-bind:to="'/about'">About</b-link>
+            <!-- <b-link v-bind:to="'/'">Home</b-link>
+            <b-link v-bind:to="'/user'">Users</b-link> -->
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->

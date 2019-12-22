@@ -5,24 +5,31 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    users: [],
+    users: JSON.parse(localStorage.getItem("users")) || [],
     update: {}
   },
 
   mutations: {
+    getUsers: async state => {
+      let users = await localStorage.getItem("users");
+      state.users = users;
+    },
     addUser: (state, user) => {
       state.users.push(user);
+      localStorage.setItem("users", JSON.stringify(state.users));
     },
     updateUser: (state, user, index) => {
       //   let index = state.users.findIndex(item => item.email === user.email);
       //   if (index) {
       state.users[index] = user;
+      localStorage.setItem("users", JSON.stringify(state.users));
       //   }
     },
     deleteUser: (state, index) => {
       //   let index = state.users.findIndex(item => item.email === user.email);
       //   if (index) {
       state.users.splice(index, 1);
+      localStorage.setItem("users", JSON.stringify(state.users));
       //   }
     },
     setUpdate: (state, index) => {

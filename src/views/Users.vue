@@ -1,28 +1,47 @@
 <template>
-  <div>
-    <h1>Saved Users List</h1>
-    <b-table
-      show-empty
-      stacked="md"
-      :items="mapUsers"
-      :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-    >
-      <template v-slot:cell(index)="data">
-        {{ data.index + 1 }}
-      </template>
-      <template v-slot:cell(action)="data">
-        <b-button variant="info" v-on:click="onModalOpen($event, data.index)"
-          >Edit</b-button
+  <div v-on:load="onLoad">
+    <b-row style="margin-top:20px">
+      <b-col></b-col>
+      <b-col><h1>Saved Users List</h1></b-col>
+      <b-col></b-col>
+      <b-col
+        ><b-button variant="info" to="/addUser">Add New User </b-button></b-col
+      >
+    </b-row>
+    <b-row class="text-center">
+      <b-col></b-col>
+      <b-col cols="10">
+        <b-table
+          show-empty
+          stacked="md"
+          :items="mapUsers"
+          :fields="fields"
+          :current-page="currentPage"
+          :per-page="perPage"
         >
-        <b-button variant="danger" v-on:click="onDeleteUser($event, data.index)"
-          >Delete</b-button
-        >
-      </template>
-    </b-table>
+          <template v-slot:cell(index)="data">
+            {{ data.index + 1 }}
+          </template>
+          <template v-slot:cell(action)="data">
+            <b-button
+              variant="info"
+              v-on:click="onModalOpen($event, data.index)"
+              >Edit</b-button
+            >
+            <b-button
+              variant="danger"
+              v-on:click="onDeleteUser($event, data.index)"
+              >Delete</b-button
+            >
+          </template>
+        </b-table></b-col
+      >
+      <b-col></b-col>
+    </b-row>
+
     <b-row>
-      <b-col md="6" class="my-1">
+      <b-col></b-col>
+      <b-col md="10" class="my-1">
         <b-pagination
           :total-rows="totalRows"
           :per-page="perPage"
@@ -30,6 +49,7 @@
           class="my-0"
         />
       </b-col>
+      <b-col></b-col>
     </b-row>
     <b-modal
       id="modal-1"
@@ -70,7 +90,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -109,6 +129,10 @@ export default {
     },
     onDeleteUser(index) {
       this.$store.dispatch("deleteUserAction", index);
+    },
+    onLoad(evt) {
+      evt.preventDefault();
+      this.getUsers();
     }
   },
   computed: {
@@ -121,7 +145,9 @@ export default {
       "updateUserAction",
       "deleteUserAction"
     ]),
-    ...mapGetters(["getUpdated"])
+    ...mapGetters(["getUpdated"]),
+
+    ...mapActions(["getUsers"])
   }
 };
 </script>
