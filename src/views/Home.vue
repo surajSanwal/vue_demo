@@ -4,7 +4,12 @@
       <b-row>
         <b-col></b-col>
         <b-col
-          ><b-form @submit="onSubmit" @reset="onReset" v-if="show">
+          ><b-form
+            ref="my-form"
+            @submit="onSubmit"
+            @reset="onReset"
+            v-if="show"
+          >
             <b-form-group
               id="input-group-1"
               label="Email address:"
@@ -61,10 +66,10 @@
             <b-button type="submit" variant="primary">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
           </b-form>
-          <b-card class="mt-3" header="Form Data Result">
+          <!-- <b-card class="mt-3" header="Form Data Result">
             <pre class="m-0">{{ form }}</pre>
-          </b-card></b-col
-        >
+          </b-card> -->
+        </b-col>
         <b-col></b-col>
       </b-row>
     </b-container>
@@ -72,6 +77,7 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -92,21 +98,30 @@ export default {
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
-      alert(JSON.stringify(this.form));
+      // alert(JSON.stringify(this.form));
+      // this.$store.commit("addUser(this.form)");
+      this.$store.dispatch("addUserAction", this.form);
+      // this.form.email = "";
+      // this.form.name = "";
+      // this.form.mobile = null;
+      // this.form.gender = "";
     },
     onReset(evt) {
       evt.preventDefault();
       // Reset our form values
       this.form.email = "";
       this.form.name = "";
-      this.form.food = null;
-      this.form.checked = [];
+      this.form.mobile = null;
+      this.form.gender = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
       });
     }
+  },
+  computed: {
+    ...mapMutations(["addUser"])
   }
 };
 </script>

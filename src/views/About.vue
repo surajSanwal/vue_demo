@@ -1,28 +1,24 @@
 <template>
   <div>
-    <!-- <h1>View blog posts</h1> -->
+    <h1>Saved Users List</h1>
     <b-table
       show-empty
       stacked="md"
-      :items="users"
+      :items="mapUsers"
       :fields="fields"
       :current-page="currentPage"
       :per-page="perPage"
     >
-      <template slot="name" slot-scope="row">
-        <pre> {{ row }}</pre>
+      <template v-slot:cell(index)="data">
+        {{ data.index + 1 }}
       </template>
-
-      <template slot="email" slot-scope="row">
-        <pre> {{ row }}</pre>
-      </template>
-
-      <template slot="mobile" slot-scope="row">
-        <pre> {{ row }}</pre>
-      </template>
-
-      <template slot="edit" slot-scope="row">
-        <b-button variant="warning">{{ row.value.edit }}</b-button>
+      <template v-slot:cell(action)="data">
+        <b-button variant="info" v-on:click="onModalOpen($event, data.index)"
+          >Edit</b-button
+        >
+        <b-button variant="danger" v-on:click="onDeleteUser($event, data.index)"
+          >Delete</b-button
+        >
       </template>
     </b-table>
     <b-row>
@@ -35,58 +31,97 @@
         />
       </b-col>
     </b-row>
+    <b-modal
+      id="modal-1"
+      title="Edit User"
+      ok-title="Update"
+      cancel-title="Cancel Update"
+      @ok="handleOk"
+      ref="my-modal"
+    >
+      <b-form-group id="input-group-3" label="Name:" label-for="input-4">
+        <b-form-input
+          v-model="updated.name"
+          placeholder="Enter your name"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Email:" label-for="input-4">
+        <b-form-input
+          v-model="updated.email"
+          placeholder="Enter your email"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Mobile:" label-for="input-4">
+        <b-form-input
+          v-model="updated.mobile"
+          placeholder="Enter your mobile"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Gender:" label-for="input-4">
+        <b-form-select
+          id="input-4"
+          v-model="updated.gender"
+          :options="gender"
+          required
+        ></b-form-select>
+      </b-form-group>
+    </b-modal>
   </div>
 </template>
 
 <script>
-// import { mapState } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   data() {
     return {
       data: [],
-      users: [
-        {
-          name: "Dickerson",
-          email: "Macdonald",
-          mobile: 9760843156,
-          gender: "Male",
-          edit: "edit"
-        },
-        {
-          name: "Dickerson",
-          email: "Macdonald",
-          mobile: 9760843156,
-          gender: "Male",
-          edit: "edit"
-        },
-        {
-          name: "Dickerson",
-          email: "Macdonald",
-          mobile: 9760843156,
-          gender: "Male",
-          edit: "edit"
-        },
-        {
-          name: "Dickerson",
-          email: "Macdonald",
-          mobile: 9760843156,
-          gender: "Female",
-          edit: "edit"
-        },
-        {
-          name: "Dickerson",
-          email: "Macdonald",
-          mobile: 9760843156,
-          gender: "Male",
-          edit: "edit"
-        }
+      gender: [
+        { text: "Select Gender", value: null },
+        { text: "Male", value: "Male" },
+        { text: "Female", value: "Female" }
       ],
+      fields: ["index", "name", "email", "mobile", "gender", "action"],
+      mapUsers: this.$store.state["users"],
       currentPage: 1,
-      perPage: 5,
+      perPage: 15,
       totalRows: 10,
-      pageOptions: [5, 10, 15]
+      pageOptions: [5, 10, 15],
+      updated: this.$store.state["update"]
     };
+  },
+  methods: {
+    onModalOpen(evt, index) {
+      evt.preventDefault();
+      this.$store.dispatch("setUpdateAction", index);
+      this.$refs["my-modal"].show();
+
+      this.activeIndex = index;
+      this.updated = this.$store.state["update"];
+      console.log(this);
+    },
+    handleOk(evt) {
+      evt.preventDefault();
+      this.handleSubmit();
+    },
+    handleSubmit() {
+      this.$refs["my-modal"].hide();
+      this.$store.dispatch("updateUserAction", this.updated, this.activeIndex);
+    },
+    onDeleteUser(index) {
+      this.$store.dispatch("deleteUserAction", index);
+    }
+  },
+  computed: {
+    state: {
+      activeIndex: 0,
+      ...mapState(["users", "update"])
+    },
+    ...mapMutations([
+      "setUpdateAction",
+      "updateUserAction",
+      "deleteUserAction"
+    ]),
+    ...mapGetters(["getUpdated"])
   }
-  // computed: mapState(["users"])
 };
 </script>
